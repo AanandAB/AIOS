@@ -1,0 +1,52 @@
+model_list:
+  # Anthropic Models
+  - model_name: claude-opus-4
+    litellm_params:
+      model: anthropic/claude-opus-4-20250514
+      api_key: os.environ/ANTHROPIC_API_KEY
+  - model_name: claude-sonnet-4
+    litellm_params:
+      model: anthropic/claude-sonnet-4-20250514
+      api_key: os.environ/ANTHROPIC_API_KEY
+
+  # OpenAI Models
+  - model_name: gpt-4.1
+    litellm_params:
+      model: openai/gpt-4.1
+      api_key: os.environ/OPENAI_API_KEY
+  - model_name: gpt-4o
+    litellm_params:
+      model: openai/gpt-4o
+      api_key: os.environ/OPENAI_API_KEY
+
+  # Gemini Models
+  - model_name: gemini-2.5-pro
+    litellm_params:
+      model: gemini/gemini-2.5-pro
+      api_key: os.environ/GEMINI_API_KEY
+  - model_name: gemini-2.5-flash
+    litellm_params:
+      model: gemini/gemini-2.5-flash
+      api_key: os.environ/GEMINI_API_KEY
+
+  # OpenRouter Models
+  - model_name: openrouter/auto
+    litellm_params:
+      model: openrouter/auto
+      api_key: os.environ/OPENROUTER_API_KEY
+  - model_name: openrouter/anthropic/claude-3.5-sonnet
+    litellm_params:
+      model: openrouter/anthropic/claude-3.5-sonnet
+      api_key: os.environ/OPENROUTER_API_KEY
+  - model_name: openrouter/openai/gpt-4o
+    litellm_params:
+      model: openrouter/openai/gpt-4o
+      api_key: os.environ/OPENROUTER_API_KEY
+  - model_name: openrouter/google/gemini-pro
+    litellm_params:
+      model: openrouter/google/gemini-pro
+      api_key: os.environ/OPENROUTER_API_KEY
+  - model_name: openrouter/meta-llama/llama-3.1-70b
+    litellm_params:
+      model: openrouter/meta-llama/llama-3.1-70b-instruct
+      api_key: os.environ/OPENROUTER_API_KEY
