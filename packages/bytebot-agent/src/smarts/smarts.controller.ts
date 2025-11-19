@@ -3,6 +3,7 @@ import { SMARTSOrchestrator } from './orchestrator';
 import { HotSwapManager } from './hot-swap-manager';
 import { DynamicReconfigurator } from './dynamic-reconfigurator';
 import { EvolutionEngine } from './evolution-engine';
+import { SMARTSDemoService } from './smarts-demo.service';
 
 @Controller('smarts')
 export class SMARTSController {
@@ -13,6 +14,7 @@ export class SMARTSController {
     private readonly hotSwapManager: HotSwapManager,
     private readonly dynamicReconfigurator: DynamicReconfigurator,
     private readonly evolutionEngine: EvolutionEngine,
+    private readonly demoService: SMARTSDemoService,
   ) {}
 
   @Post('process-task')
@@ -20,13 +22,13 @@ export class SMARTSController {
     @Body() taskRequest: { description: string; taskId: string },
   ): Promise<any> {
     this.logger.log(`Received task processing request: ${taskRequest.taskId}`);
-    
+
     try {
       const result = await this.orchestrator.processTask(
         taskRequest.description,
         taskRequest.taskId,
       );
-      
+
       return {
         success: true,
         taskId: taskRequest.taskId,
@@ -46,14 +48,16 @@ export class SMARTSController {
   async hotSwapComponent(
     @Body() swapRequest: { componentId: string; newVersion: any },
   ): Promise<any> {
-    this.logger.log(`Received hot-swap request for: ${swapRequest.componentId}`);
-    
+    this.logger.log(
+      `Received hot-swap request for: ${swapRequest.componentId}`,
+    );
+
     try {
       const success = await this.orchestrator.hotSwapComponent(
         swapRequest.componentId,
         swapRequest.newVersion,
       );
-      
+
       return {
         success,
         componentId: swapRequest.componentId,
@@ -73,12 +77,12 @@ export class SMARTSController {
     @Body() configRequest: { configuration: any },
   ): Promise<any> {
     this.logger.log('Received reconfiguration request');
-    
+
     try {
       const success = await this.dynamicReconfigurator.reconfigure(
         configRequest.configuration,
       );
-      
+
       return {
         success,
         configuration: configRequest.configuration,
@@ -95,10 +99,10 @@ export class SMARTSController {
   @Post('evolve')
   async triggerEvolution(): Promise<any> {
     this.logger.log('Received evolution trigger request');
-    
+
     try {
       await this.evolutionEngine.runEvolutionCycle();
-      
+
       return {
         success: true,
         message: 'Evolution cycle completed',
@@ -127,5 +131,53 @@ export class SMARTSController {
       componentId,
       history: this.hotSwapManager.getVersionHistory(componentId),
     };
+  }
+
+  // New endpoint to demonstrate the complete SMARTS architecture
+  @Get('demo')
+  async runDemo(): Promise<any> {
+    this.logger.log('Received SMARTS demonstration request');
+
+    try {
+      const result = await this.demoService.demonstrateSMARTS();
+
+      return {
+        success: true,
+        demonstration: result,
+      };
+    } catch (error) {
+      this.logger.error(`SMARTS demonstration failed: ${error.message}`);
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  }
+
+  // New endpoint to run continuous optimization
+  @Post('optimize')
+  async runOptimization(
+    @Body() optimizationRequest: { cycles: number },
+  ): Promise<any> {
+    this.logger.log(
+      `Received optimization request for ${optimizationRequest.cycles} cycles`,
+    );
+
+    try {
+      const result = await this.demoService.runContinuousOptimization(
+        optimizationRequest.cycles,
+      );
+
+      return {
+        success: true,
+        optimization: result,
+      };
+    } catch (error) {
+      this.logger.error(`Optimization failed: ${error.message}`);
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
   }
 }

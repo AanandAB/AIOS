@@ -106,6 +106,14 @@ docker-compose -f docker/docker-compose.yml up -d
 # Open http://localhost:9992
 ```
 
+After deployment, explore advanced features like the SMARTS architecture (Self-adaptive Multi-agent Planning and Task Execution System) which provides:
+
+- Multi-Agent Collaboration Framework
+- Dynamic System Reconfiguration
+- Hot-Swapping of Components
+- Evolutionary Optimization
+- Recursive Self-Improvement
+
 [Full deployment guide →](https://docs.bytebot.ai/quickstart)
 
 ## How It Works
@@ -126,6 +134,7 @@ Bytebot consists of four integrated components:
 - **Password Manager Support**: Install 1Password, Bitwarden, etc. for automatic authentication
 - **Persistent Environment**: Install programs and they stay available for future tasks
 - **Multi-Model Support**: Use Anthropic, OpenAI, Google, or OpenRouter models
+- **SMARTS Architecture**: Self-adaptive Multi-agent Planning and Task Execution System with recursive self-improvement capabilities
 
 ## Example Tasks
 
@@ -193,6 +202,25 @@ curl -X POST http://localhost:9990/computer-use \
   -d '{"action": "click_mouse", "coordinate": [500, 300]}'
 ```
 
+### SMARTS Architecture API
+
+Access advanced multi-agent capabilities through the SMARTS API:
+
+```bash
+# Process a complex task using the SMARTS orchestrator
+curl -X POST http://localhost:9991/smarts/process-task \
+  -H "Content-Type: application/json" \
+  -d '{"description": "Research AI trends and create a summary report", "taskId": "task-123"}'
+
+# Run a SMARTS demonstration
+curl -X GET http://localhost:9991/smarts/demo
+
+# Run continuous optimization cycles
+curl -X POST http://localhost:9991/smarts/optimize \
+  -H "Content-Type: application/json" \
+  -d '{"cycles": 3}'
+```
+
 [Full API documentation →](https://docs.bytebot.ai/api-reference/introduction)
 
 ## Setting Up Your Desktop Agent
@@ -213,6 +241,26 @@ Use the Desktop tab in the UI to:
 ### 3. Start Giving Tasks
 
 Create tasks in natural language and watch Bytebot complete them using the configured desktop.
+
+### 4. Leverage SMARTS Architecture (Advanced)
+
+For advanced users, Bytebot includes the SMARTS (Self-adaptive Multi-agent Planning and Task Execution System) architecture:
+
+- **Multi-Agent Collaboration**: Specialized agents for vision, action, planning, and learning tasks
+- **Dynamic Reconfiguration**: Automatic system optimization based on task requirements
+- **Hot-Swapping**: Real-time component updates without service interruption
+- **Evolutionary Optimization**: Continuous system improvement through self-analysis
+- **Recursive Self-Improvement**: Agents that can redesign their own architecture
+
+Access SMARTS features through the API or use the demonstration scripts:
+
+```bash
+# Run SMARTS architecture demonstration
+npm run smarts-demo
+
+# Run SMARTS integration tests
+npm run smarts-test
+```
 
 ## Use Cases
 
@@ -246,6 +294,7 @@ Bytebot is built with:
 - **UI**: Next.js application for task management
 - **AI Support**: Works with Anthropic Claude, OpenAI GPT, Google Gemini, and OpenRouter
 - **Deployment**: Docker containers for easy self-hosting
+- **SMARTS**: Self-adaptive Multi-agent Planning and Task Execution System with recursive self-improvement capabilities
 
 ## Why Self-Host?
 
@@ -281,6 +330,54 @@ helm install bytebot ./helm \
 ```
 
 [Enterprise deployment guide →](https://docs.bytebot.ai/deployment/helm)
+
+## Production Considerations
+
+When running Bytebot in production, consider these additional features and configurations:
+
+### SMARTS Architecture
+
+The SMARTS (Self-adaptive Multi-agent Planning and Task Execution System) provides advanced capabilities for production use:
+
+- **Self-Optimization**: The system continuously analyzes performance and optimizes its own configuration
+- **Fault Tolerance**: Multi-agent architecture provides redundancy and graceful degradation
+- **Scalability**: Dynamic agent creation and resource allocation based on workload
+- **Adaptive Learning**: The system learns from task outcomes to improve future performance
+
+Enable SMARTS features by ensuring the agent service has sufficient resources:
+
+```yaml
+# Example resource allocation for Kubernetes
+resources:
+  requests:
+    memory: "2Gi"
+    cpu: "1"
+  limits:
+    memory: "4Gi"
+    cpu: "2"
+```
+
+### Monitoring and Maintenance
+
+Monitor SMARTS components through the built-in logging and metrics:
+
+```bash
+# Check SMARTS system status
+curl http://localhost:9991/smarts/configuration
+
+# Trigger an evolution cycle
+curl -X POST http://localhost:9991/smarts/evolve
+
+# Check component version history
+curl http://localhost:9991/smarts/version-history/vision-agent-1
+```
+
+### Security Considerations
+
+- Ensure API keys are properly secured using Kubernetes secrets or environment variables
+- Regularly update container images to latest versions
+- Monitor agent behavior through logs for unexpected activities
+- Implement network policies to restrict unnecessary communication
 
 ## Community & Support
 

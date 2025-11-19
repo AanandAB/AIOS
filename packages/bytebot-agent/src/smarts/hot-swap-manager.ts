@@ -18,22 +18,22 @@ export class HotSwapManager {
   async swap(componentId: string, newVersion: any): Promise<boolean> {
     try {
       this.logger.log(`Attempting hot-swap for component ${componentId}`);
-      
+
       // 1. Validate the new version
       if (!this.validateComponent(newVersion)) {
         throw new Error('Invalid component version');
       }
-      
+
       // 2. Backup current version
       const backup = this.backupCurrentVersion(componentId);
-      
+
       // 3. Deploy new version
       const deployed = await this.deployNewVersion(componentId, newVersion);
-      
+
       if (deployed) {
         // 4. Register new version in history
         this.registerVersion(componentId, newVersion);
-        
+
         this.logger.log(`Successfully hot-swapped component ${componentId}`);
         return true;
       } else {
@@ -42,7 +42,9 @@ export class HotSwapManager {
         return false;
       }
     } catch (error) {
-      this.logger.error(`Failed to hot-swap component ${componentId}: ${error.message}`);
+      this.logger.error(
+        `Failed to hot-swap component ${componentId}: ${error.message}`,
+      );
       return false;
     }
   }
@@ -55,7 +57,7 @@ export class HotSwapManager {
     // - Component interface compatibility
     // - Code integrity checks
     // - Dependency compatibility
-    
+
     // For now, we'll assume all components are valid
     return true;
   }
@@ -66,30 +68,33 @@ export class HotSwapManager {
   private backupCurrentVersion(componentId: string): ComponentVersion | null {
     // In a real implementation, this would create a backup of the current component
     this.logger.debug(`Creating backup for component ${componentId}`);
-    
+
     // Return mock backup for demonstration
     return {
       id: componentId,
       version: 'backup-' + Date.now(),
       code: 'backup-code',
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
   }
 
   /**
    * Deploy new version of a component
    */
-  private async deployNewVersion(componentId: string, newVersion: any): Promise<boolean> {
+  private async deployNewVersion(
+    componentId: string,
+    newVersion: any,
+  ): Promise<boolean> {
     // In a real implementation, this would:
     // - Load the new component code
     // - Replace the current component instance
     // - Update all references to the component
-    
+
     this.logger.debug(`Deploying new version for component ${componentId}`);
-    
+
     // Simulate deployment process
-    await new Promise(resolve => setTimeout(resolve, 100));
-    
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
     // For demonstration, we'll assume deployment is successful
     return true;
   }
@@ -101,14 +106,14 @@ export class HotSwapManager {
     if (!this.componentRegistry.has(componentId)) {
       this.componentRegistry.set(componentId, []);
     }
-    
+
     const versionEntry: ComponentVersion = {
       id: componentId,
       version: newVersion.version || '1.0.0',
       code: newVersion.code || '',
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
-    
+
     const registry = this.componentRegistry.get(componentId);
     if (registry) {
       registry.push(versionEntry);
@@ -119,16 +124,19 @@ export class HotSwapManager {
   /**
    * Rollback to previous version if deployment fails
    */
-  private async rollback(componentId: string, backup: ComponentVersion | null): Promise<void> {
+  private async rollback(
+    componentId: string,
+    backup: ComponentVersion | null,
+  ): Promise<void> {
     if (!backup) {
       this.logger.warn(`No backup available for component ${componentId}`);
       return;
     }
-    
+
     this.logger.warn(`Rolling back component ${componentId} to backup version`);
-    
+
     // In a real implementation, this would restore the backup version
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 50));
   }
 
   /**

@@ -25,7 +25,7 @@ export class AgentFactory {
    */
   private initializeDefaultAgents(): void {
     this.logger.log('Initializing default recursive micro-agents');
-    
+
     // Register vision agents
     this.agentRegistry.registerAgent({
       id: 'vision-agent-1',
@@ -35,13 +35,13 @@ export class AgentFactory {
       performanceMetrics: {
         successRate: 0.95,
         avgExecutionTime: 300,
-        totalExecutions: 100
+        totalExecutions: 100,
       },
       execute: async (task: any, taskId: string) => {
         return await this.visionAgent.processVisualTask(task, taskId);
-      }
+      },
     });
-    
+
     this.agentRegistry.registerAgent({
       id: 'vision-agent-2',
       type: 'vision',
@@ -50,13 +50,13 @@ export class AgentFactory {
       performanceMetrics: {
         successRate: 0.92,
         avgExecutionTime: 350,
-        totalExecutions: 85
+        totalExecutions: 85,
       },
       execute: async (task: any, taskId: string) => {
         return await this.visionAgent.processVisualTask(task, taskId);
-      }
+      },
     });
-    
+
     // Register action agents
     this.agentRegistry.registerAgent({
       id: 'action-agent-1',
@@ -66,13 +66,13 @@ export class AgentFactory {
       performanceMetrics: {
         successRate: 0.98,
         avgExecutionTime: 200,
-        totalExecutions: 200
+        totalExecutions: 200,
       },
       execute: async (task: any, taskId: string) => {
         return await this.actionAgent.executeAction(task, taskId);
-      }
+      },
     });
-    
+
     this.agentRegistry.registerAgent({
       id: 'action-agent-2',
       type: 'action',
@@ -81,13 +81,13 @@ export class AgentFactory {
       performanceMetrics: {
         successRate: 0.96,
         avgExecutionTime: 220,
-        totalExecutions: 180
+        totalExecutions: 180,
       },
       execute: async (task: any, taskId: string) => {
         return await this.actionAgent.executeAction(task, taskId);
-      }
+      },
     });
-    
+
     // Register planning agent
     this.agentRegistry.registerAgent({
       id: 'planning-agent-1',
@@ -97,29 +97,33 @@ export class AgentFactory {
       performanceMetrics: {
         successRate: 0.99,
         avgExecutionTime: 500,
-        totalExecutions: 150
+        totalExecutions: 150,
       },
       execute: async (task: any, taskId: string) => {
         return await this.planningAgent.createPlan(task, taskId);
-      }
+      },
     });
-    
+
     // Register learning agent
     this.agentRegistry.registerAgent({
       id: 'learning-agent-1',
       type: 'learning',
       version: '1.0.0',
-      capabilities: ['performance-analysis', 'optimization', 'pattern-recognition'],
+      capabilities: [
+        'performance-analysis',
+        'optimization',
+        'pattern-recognition',
+      ],
       performanceMetrics: {
-        successRate: 0.90,
+        successRate: 0.9,
         avgExecutionTime: 400,
-        totalExecutions: 75
+        totalExecutions: 75,
       },
       execute: async (task: any, taskId: string) => {
         return await this.learningAgent.optimizePerformance(taskId, [task]);
-      }
+      },
     });
-    
+
     this.logger.log('Default agents initialized and registered');
   }
 
@@ -128,10 +132,10 @@ export class AgentFactory {
    */
   createAgent(agentType: string, config: any): string {
     const agentId = `${agentType}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    
+
     let agentImplementation: any;
     let capabilities: string[] = [];
-    
+
     switch (agentType) {
       case 'vision':
         agentImplementation = this.visionAgent;
@@ -143,16 +147,24 @@ export class AgentFactory {
         break;
       case 'planning':
         agentImplementation = this.planningAgent;
-        capabilities = ['task-decomposition', 'resource-allocation', 'sequencing'];
+        capabilities = [
+          'task-decomposition',
+          'resource-allocation',
+          'sequencing',
+        ];
         break;
       case 'learning':
         agentImplementation = this.learningAgent;
-        capabilities = ['performance-analysis', 'optimization', 'pattern-recognition'];
+        capabilities = [
+          'performance-analysis',
+          'optimization',
+          'pattern-recognition',
+        ];
         break;
       default:
         throw new Error(`Unsupported agent type: ${agentType}`);
     }
-    
+
     const newAgent = {
       id: agentId,
       type: agentType,
@@ -161,7 +173,7 @@ export class AgentFactory {
       performanceMetrics: {
         successRate: 0.5, // Initial neutral performance
         avgExecutionTime: 0,
-        totalExecutions: 0
+        totalExecutions: 0,
       },
       execute: async (task: any, taskId: string) => {
         switch (agentType) {
@@ -176,12 +188,14 @@ export class AgentFactory {
           default:
             throw new Error(`Unsupported agent type: ${agentType}`);
         }
-      }
+      },
     };
-    
+
     this.agentRegistry.registerAgent(newAgent);
-    this.logger.log(`Created and registered new ${agentType} agent: ${agentId}`);
-    
+    this.logger.log(
+      `Created and registered new ${agentType} agent: ${agentId}`,
+    );
+
     return agentId;
   }
 

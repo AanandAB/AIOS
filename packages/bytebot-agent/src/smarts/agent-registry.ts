@@ -32,13 +32,13 @@ export class AgentRegistry {
    */
   registerAgent(agent: Agent): void {
     this.agents.set(agent.id, agent);
-    
+
     // Update type index
     if (!this.agentTypeIndex.has(agent.type)) {
       this.agentTypeIndex.set(agent.type, []);
     }
     this.agentTypeIndex.get(agent.type)?.push(agent.id);
-    
+
     this.logger.log(`Registered agent ${agent.id} of type ${agent.type}`);
   }
 
@@ -54,33 +54,33 @@ export class AgentRegistry {
    */
   getAgentForTask(taskType: string): Agent {
     const agentIds = this.agentTypeIndex.get(taskType) || [];
-    
+
     if (agentIds.length === 0) {
       // No specialized agent found, return primary agent
       return this.getPrimaryAgent();
     }
-    
+
     // Return the agent with best performance metrics
     const firstAgent = this.agents.get(agentIds[0]);
     if (!firstAgent) {
       return this.getPrimaryAgent();
     }
-    
+
     let bestAgent: Agent = firstAgent;
     let bestScore = this.calculateAgentScore(bestAgent);
-    
+
     for (const agentId of agentIds) {
       const agent = this.agents.get(agentId);
       if (!agent) continue;
-      
+
       const score = this.calculateAgentScore(agent);
-      
+
       if (score > bestScore) {
         bestAgent = agent;
         bestScore = score;
       }
     }
-    
+
     return bestAgent;
   }
 
@@ -89,28 +89,28 @@ export class AgentRegistry {
    */
   getAlternativeAgent(agentType: string): Agent | null {
     const agentIds = this.agentTypeIndex.get(agentType) || [];
-    
+
     if (agentIds.length < 2) {
       return null; // No alternative available
     }
-    
+
     // Return the second best agent
     const firstAgent = this.agents.get(agentIds[0]);
     if (!firstAgent) {
       return null;
     }
-    
+
     let bestAgent: Agent = firstAgent;
     let bestScore = this.calculateAgentScore(bestAgent);
     let secondBestAgent: Agent | null = null;
     let secondBestScore = -1;
-    
+
     for (const agentId of agentIds) {
       const agent = this.agents.get(agentId);
       if (!agent) continue;
-      
+
       const score = this.calculateAgentScore(agent);
-      
+
       if (score > bestScore) {
         secondBestAgent = bestAgent;
         secondBestScore = bestScore;
@@ -121,7 +121,7 @@ export class AgentRegistry {
         secondBestScore = score;
       }
     }
-    
+
     return secondBestAgent;
   }
 
@@ -138,7 +138,7 @@ export class AgentRegistry {
         return agent;
       }
     }
-    
+
     // Fallback - create a minimal agent
     return {
       id: 'primary-agent-fallback',
@@ -148,11 +148,11 @@ export class AgentRegistry {
       performanceMetrics: {
         successRate: 1.0,
         avgExecutionTime: 100,
-        totalExecutions: 1
+        totalExecutions: 1,
       },
       execute: async (task: any, taskId: string) => {
         return { result: 'Primary agent fallback execution', taskId };
-      }
+      },
     };
   }
 
@@ -162,23 +162,28 @@ export class AgentRegistry {
   updatePerformanceMetrics(agentId: string, metrics: AgentPerformance): void {
     const agent = this.agents.get(agentId);
     if (!agent) {
-      this.logger.warn(`Attempted to update metrics for non-existent agent ${agentId}`);
+      this.logger.warn(
+        `Attempted to update metrics for non-existent agent ${agentId}`,
+      );
       return;
     }
-    
+
     const totalExecutions = agent.performanceMetrics.totalExecutions + 1;
-    const successCount = agent.performanceMetrics.successRate * agent.performanceMetrics.totalExecutions + 
-                         (metrics.success ? 1 : 0);
-    
+    const successCount =
+      agent.performanceMetrics.successRate *
+        agent.performanceMetrics.totalExecutions +
+      (metrics.success ? 1 : 0);
+
     agent.performanceMetrics.totalExecutions = totalExecutions;
     agent.performanceMetrics.successRate = successCount / totalExecutions;
-    
+
     if (metrics.executionTime) {
       const currentAvg = agent.performanceMetrics.avgExecutionTime;
-      agent.performanceMetrics.avgExecutionTime = 
-        (currentAvg * (totalExecutions - 1) + metrics.executionTime) / totalExecutions;
+      agent.performanceMetrics.avgExecutionTime =
+        (currentAvg * (totalExecutions - 1) + metrics.executionTime) /
+        totalExecutions;
     }
-    
+
     this.logger.debug(`Updated performance metrics for agent ${agentId}`);
   }
 
@@ -189,13 +194,18 @@ export class AgentRegistry {
     // Weighted scoring based on success rate and execution time
     const successWeight = 0.7;
     const timeWeight = 0.3;
-    
+
     // Normalize execution time (lower is better)
     const maxTime = 10000; // ms - adjust based on domain
-    const normalizedTime = Math.max(0, 1 - (agent.performanceMetrics.avgExecutionTime / maxTime));
-    
-    return (agent.performanceMetrics.successRate * successWeight) + 
-           (normalizedTime * timeWeight);
+    const normalizedTime = Math.max(
+      0,
+      1 - agent.performanceMetrics.avgExecutionTime / maxTime,
+    );
+
+    return (
+      agent.performanceMetrics.successRate * successWeight +
+      normalizedTime * timeWeight
+    );
   }
 
   /**
@@ -213,7 +223,7 @@ export class AgentRegistry {
     if (!agent) {
       return false;
     }
-    
+
     // Remove from type index
     const typeAgents = this.agentTypeIndex.get(agent.type);
     if (typeAgents) {
@@ -222,7 +232,7 @@ export class AgentRegistry {
         typeAgents.splice(index, 1);
       }
     }
-    
+
     // Remove from main registry
     this.agents.delete(agentId);
     this.logger.log(`Unregistered agent ${agentId}`);
