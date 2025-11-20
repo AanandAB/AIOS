@@ -34,7 +34,8 @@ export class AbstractReasoningModule {
   /**
    * Symbolic reasoning combined with neural processing
    */
-  async applySymbolicRules(facts: string[], context: any): Promise<any> {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async applySymbolicRules(facts: string[]): Promise<any> {
     this.logger.log(`Applying symbolic rules to ${facts.length} facts`);
 
     // In a real implementation, this would:
@@ -54,6 +55,7 @@ export class AbstractReasoningModule {
   /**
    * Causal inference capabilities
    */
+  // eslint-disable-next-line @typescript-eslint/require-await
   async buildCausalModel(observations: any[]): Promise<CausalModel> {
     this.logger.log(
       `Building causal model from ${observations.length} observations`,
@@ -80,6 +82,7 @@ export class AbstractReasoningModule {
   /**
    * Hypothetical scenario simulation
    */
+  // eslint-disable-next-line @typescript-eslint/require-await
   async simulateScenario(scenario: HypotheticalScenario): Promise<any> {
     this.logger.log(`Simulating scenario: ${scenario.description}`);
 
@@ -103,6 +106,7 @@ export class AbstractReasoningModule {
   /**
    * Add symbolic rule to knowledge base
    */
+  // eslint-disable-next-line @typescript-eslint/require-await
   async addSymbolicRule(rule: SymbolicRule): Promise<boolean> {
     this.symbolicRules.set(rule.id, rule);
     this.logger.log(`Added symbolic rule: ${rule.id}`);

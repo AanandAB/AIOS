@@ -26,10 +26,11 @@ export class SocialIntelligenceModule {
   /**
    * Multi-agent collaboration protocols
    */
-  async establishCollaborationProtocol(
+  establishCollaborationProtocol(
     participants: string[],
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     goal: string,
-  ): Promise<CollaborationProtocol> {
+  ): CollaborationProtocol {
     this.logger.log(
       `Establishing collaboration protocol for ${participants.length} participants`,
     );
@@ -55,10 +56,12 @@ export class SocialIntelligenceModule {
   /**
    * Communication language evolution
    */
-  async evolveCommunicationLanguage(
+  evolveCommunicationLanguage(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     currentLanguage: any,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     interactionHistory: any[],
-  ): Promise<any> {
+  ): any {
     this.logger.log('Evolving communication language');
 
     // In a real implementation, this would:
@@ -82,10 +85,11 @@ export class SocialIntelligenceModule {
   /**
    * Collective problem-solving capabilities
    */
-  async solveCollectiveProblem(
+  solveCollectiveProblem(
     problem: CollectiveProblem,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     agentContributions: any[],
-  ): Promise<any> {
+  ): any {
     this.logger.log(`Solving collective problem: ${problem.description}`);
 
     // Store the problem
@@ -112,10 +116,7 @@ export class SocialIntelligenceModule {
   /**
    * Update collective problem progress
    */
-  async updateProblemProgress(
-    problemId: string,
-    progress: number,
-  ): Promise<boolean> {
+  updateProblemProgress(problemId: string, progress: number): boolean {
     const problem = this.collectiveProblems.get(problemId);
     if (!problem) {
       this.logger.warn(`Problem ${problemId} not found`);

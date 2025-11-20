@@ -15,7 +15,10 @@ export class HotSwapManager {
   /**
    * Hot-swap a component without restarting the system
    */
-  async swap(componentId: string, newVersion: any): Promise<boolean> {
+  async swap(
+    componentId: string,
+    newVersion: { version?: string; code?: string },
+  ): Promise<boolean> {
     try {
       this.logger.log(`Attempting hot-swap for component ${componentId}`);
 
@@ -43,7 +46,7 @@ export class HotSwapManager {
       }
     } catch (error) {
       this.logger.error(
-        `Failed to hot-swap component ${componentId}: ${error.message}`,
+        `Failed to hot-swap component ${componentId}: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
       return false;
     }
@@ -52,7 +55,10 @@ export class HotSwapManager {
   /**
    * Validate component before deployment
    */
-  private validateComponent(component: any): boolean {
+  private validateComponent(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    __component: unknown,
+  ): boolean {
     // In a real implementation, this would validate:
     // - Component interface compatibility
     // - Code integrity checks
@@ -83,7 +89,8 @@ export class HotSwapManager {
    */
   private async deployNewVersion(
     componentId: string,
-    newVersion: any,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    __newVersion: unknown,
   ): Promise<boolean> {
     // In a real implementation, this would:
     // - Load the new component code
@@ -102,7 +109,10 @@ export class HotSwapManager {
   /**
    * Register new version in component history
    */
-  private registerVersion(componentId: string, newVersion: any): void {
+  private registerVersion(
+    componentId: string,
+    newVersion: { version?: string; code?: string },
+  ): void {
     if (!this.componentRegistry.has(componentId)) {
       this.componentRegistry.set(componentId, []);
     }

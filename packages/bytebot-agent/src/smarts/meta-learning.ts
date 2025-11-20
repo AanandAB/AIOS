@@ -18,10 +18,11 @@ export class MetaLearningModule {
   /**
    * Extract learning patterns from task execution history
    */
-  async extractLearningPatterns(
+  extractLearningPatterns(
     taskType: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     executionHistory: any[],
-  ): Promise<LearningPattern> {
+  ): LearningPattern {
     this.logger.log(`Extracting learning patterns for task type: ${taskType}`);
 
     // In a real implementation, this would analyze execution history to identify:
@@ -46,10 +47,7 @@ export class MetaLearningModule {
   /**
    * Apply transfer learning to new task domains
    */
-  async transferLearning(
-    sourceTaskType: string,
-    targetTaskType: string,
-  ): Promise<boolean> {
+  transferLearning(sourceTaskType: string, targetTaskType: string): boolean {
     const sourcePattern = this.learningPatterns.get(sourceTaskType);
     if (!sourcePattern) {
       this.logger.warn(
@@ -77,7 +75,7 @@ export class MetaLearningModule {
   /**
    * Optimize agent selection based on meta-learning insights
    */
-  async optimizeAgentSelection(taskType: string): Promise<string[]> {
+  optimizeAgentSelection(taskType: string): string[] {
     const pattern = this.learningPatterns.get(taskType);
     if (!pattern) {
       this.logger.warn(`No learning pattern found for task type: ${taskType}`);
@@ -98,7 +96,10 @@ export class MetaLearningModule {
   /**
    * Enable curiosity-driven exploration
    */
-  async generateExplorationTasks(currentKnowledge: any): Promise<any[]> {
+  generateExplorationTasks(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    currentKnowledge: any,
+  ): any[] {
     this.logger.log('Generating curiosity-driven exploration tasks');
 
     // In a real implementation, this would:

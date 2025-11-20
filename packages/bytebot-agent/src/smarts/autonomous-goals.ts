@@ -24,7 +24,8 @@ export class AutonomousGoalGenerationModule {
   /**
    * Generate autonomous goals based on system analysis
    */
-  async generateAutonomousGoals(currentState: any): Promise<AutonomousGoal[]> {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async generateAutonomousGoals(): Promise<AutonomousGoal[]> {
     this.logger.log('Generating autonomous goals');
 
     // In a real implementation, this would:
@@ -68,9 +69,8 @@ export class AutonomousGoalGenerationModule {
   /**
    * Implement curiosity-driven exploration mechanisms
    */
-  async identifyCuriosityTriggers(
-    currentKnowledge: any,
-  ): Promise<CuriosityTrigger[]> {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async identifyCuriosityTriggers(): Promise<CuriosityTrigger[]> {
     this.logger.log('Identifying curiosity triggers');
 
     // In a real implementation, this would:
@@ -102,6 +102,7 @@ export class AutonomousGoalGenerationModule {
   /**
    * Define self-directed progress metrics
    */
+  // eslint-disable-next-line @typescript-eslint/require-await
   async defineProgressMetrics(): Promise<any> {
     this.logger.log('Defining self-directed progress metrics');
 
@@ -125,6 +126,7 @@ export class AutonomousGoalGenerationModule {
   /**
    * Update goal progress
    */
+  // eslint-disable-next-line @typescript-eslint/require-await
   async updateGoalProgress(goalId: string, progress: number): Promise<boolean> {
     const goal = this.goals.get(goalId);
     if (!goal) {

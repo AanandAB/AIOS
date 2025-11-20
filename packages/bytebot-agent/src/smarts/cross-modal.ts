@@ -19,6 +19,7 @@ export class CrossModalIntegrationModule {
   /**
    * Combine multiple modalities into unified processing
    */
+  // eslint-disable-next-line @typescript-eslint/require-await
   async processMultimodalInput(inputs: ModalInput[]): Promise<any> {
     this.logger.log(
       `Processing multimodal input with ${inputs.length} components`,
@@ -45,9 +46,9 @@ export class CrossModalIntegrationModule {
   /**
    * Create mental simulation before physical execution
    */
+  // eslint-disable-next-line @typescript-eslint/require-await
   async createMentalSimulation(
     taskDescription: string,
-    availableActions: any[],
   ): Promise<MentalSimulation> {
     this.logger.log(`Creating mental simulation for task: ${taskDescription}`);
 
@@ -72,10 +73,8 @@ export class CrossModalIntegrationModule {
   /**
    * Predict action outcomes based on context
    */
-  async predictActionOutcomes(
-    context: any,
-    proposedActions: any[],
-  ): Promise<any[]> {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async predictActionOutcomes(proposedActions: any[]): Promise<any[]> {
     this.logger.log('Predicting action outcomes');
 
     // In a real implementation, this would:
@@ -85,7 +84,9 @@ export class CrossModalIntegrationModule {
     // 4. Assess risks and benefits
 
     return proposedActions.map((action, index) => ({
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       action,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       predictedOutcome: `Outcome prediction for ${action.type}`,
       successProbability: 0.9 - index * 0.1, // Decreasing confidence
       risks: ['potential risk 1', 'potential risk 2'],
@@ -96,11 +97,8 @@ export class CrossModalIntegrationModule {
   /**
    * Integrate sensory inputs for richer understanding
    */
-  async integrateSensoryInputs(
-    visualData: any,
-    textualData: any,
-    interactionHistory: any[],
-  ): Promise<any> {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async integrateSensoryInputs(): Promise<any> {
     this.logger.log('Integrating sensory inputs');
 
     // In a real implementation, this would:

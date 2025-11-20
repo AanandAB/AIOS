@@ -12,6 +12,8 @@ import { ActionAgent } from './agents/action-agent';
 import { PlanningAgent } from './agents/planning-agent';
 import { LearningAgent } from './agents/learning-agent';
 import { SMARTSDemoService } from './smarts-demo.service';
+import { MCPManager } from './mcp-manager';
+import { MCPPDemoService } from './mcp-demo.service';
 
 @Module({
   imports: [],
@@ -29,6 +31,8 @@ import { SMARTSDemoService } from './smarts-demo.service';
     PlanningAgent,
     LearningAgent,
     SMARTSDemoService,
+    MCPManager,
+    MCPPDemoService,
   ],
   exports: [
     SMARTSOrchestrator,
@@ -38,6 +42,8 @@ import { SMARTSDemoService } from './smarts-demo.service';
     HotSwapManager,
     DynamicReconfigurator,
     SMARTSDemoService,
+    MCPManager,
+    MCPPDemoService,
   ],
 })
 export class SMARTSModule {}

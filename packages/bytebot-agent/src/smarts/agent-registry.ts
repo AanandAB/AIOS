@@ -150,8 +150,11 @@ export class AgentRegistry {
         avgExecutionTime: 100,
         totalExecutions: 1,
       },
-      execute: async (task: any, taskId: string) => {
-        return { result: 'Primary agent fallback execution', taskId };
+      execute: (task: any, taskId: string) => {
+        return Promise.resolve({
+          result: 'Primary agent fallback execution',
+          taskId,
+        });
       },
     };
   }

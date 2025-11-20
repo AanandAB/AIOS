@@ -22,6 +22,7 @@ export class EmbodiedCognitionModule {
   /**
    * Physical world interaction through IoT devices
    */
+  // eslint-disable-next-line @typescript-eslint/require-await
   async processSensorFusion(sensors: SensorData[]): Promise<any> {
     this.logger.log(`Processing sensor fusion with ${sensors.length} sensors`);
 
@@ -45,10 +46,8 @@ export class EmbodiedCognitionModule {
   /**
    * Robotics integration for real-world manipulation
    */
-  async generatePhysicalActions(
-    goal: string,
-    environmentalContext: any,
-  ): Promise<PhysicalAction[]> {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async generatePhysicalActions(goal: string): Promise<PhysicalAction[]> {
     this.logger.log(`Generating physical actions for goal: ${goal}`);
 
     // In a real implementation, this would:
@@ -74,7 +73,8 @@ export class EmbodiedCognitionModule {
   /**
    * Enhanced environmental understanding
    */
-  async buildEnvironmentalModel(sensorData: SensorData[]): Promise<any> {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async buildEnvironmentalModel(): Promise<any> {
     this.logger.log('Building enhanced environmental model');
 
     // In a real implementation, this would:
@@ -95,6 +95,7 @@ export class EmbodiedCognitionModule {
   /**
    * Execute physical actions
    */
+  // eslint-disable-next-line @typescript-eslint/require-await
   async executePhysicalAction(action: PhysicalAction): Promise<boolean> {
     this.logger.log(`Executing physical action: ${action.type}`);
 
