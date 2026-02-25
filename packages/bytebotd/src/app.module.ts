@@ -6,12 +6,17 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BytebotMcpModule } from './mcp';
+import { OsIntelligenceModule } from './os-intelligence/os-intelligence.module';
+import { AuthModule } from './auth/auth.module';
+import { MonitoringModule } from './common/monitoring/monitoring.module';
+import { ConfigurationModule } from './common/config/config.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true, // Explicitly makes it globally available
     }),
+    ConfigurationModule,
     ServeStaticModule.forRoot({
       rootPath: '/opt/noVNC',
       serveRoot: '/novnc',
@@ -19,6 +24,9 @@ import { BytebotMcpModule } from './mcp';
     ComputerUseModule,
     InputTrackingModule,
     BytebotMcpModule,
+    OsIntelligenceModule,
+    AuthModule,
+    MonitoringModule,
   ],
   controllers: [AppController],
   providers: [AppService],
