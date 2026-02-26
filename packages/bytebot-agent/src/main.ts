@@ -12,7 +12,9 @@ async function bootstrap() {
   console.log('Starting bytebot-agent application...');
 
   try {
-    const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create(AppModule, {
+      logger: ['log', 'error', 'warn', 'debug', 'verbose'],
+    });
 
     // Configure body parser with increased payload size limit (50MB)
     app.use(json({ limit: '50mb' }));

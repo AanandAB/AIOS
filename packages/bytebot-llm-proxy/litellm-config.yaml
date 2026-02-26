@@ -1,3 +1,6 @@
+litellm_settings:
+  drop_params: true
+
 model_list:
   # Anthropic Models
   - model_name: claude-opus-4
@@ -42,11 +45,87 @@ model_list:
     litellm_params:
       model: openrouter/openai/gpt-4o
       api_key: os.environ/OPENROUTER_API_KEY
+      extra_headers:
+        HTTP-Referer: https://bytebot.ai
+        X-Title: Bytebot
+    model_info:
+      supports_vision: true
   - model_name: openrouter/google/gemini-pro
     litellm_params:
       model: openrouter/google/gemini-pro
       api_key: os.environ/OPENROUTER_API_KEY
+      extra_headers:
+        HTTP-Referer: https://bytebot.ai
+        X-Title: Bytebot
+    model_info:
+      supports_vision: true
   - model_name: openrouter/meta-llama/llama-3.1-70b
     litellm_params:
       model: openrouter/meta-llama/llama-3.1-70b-instruct
       api_key: os.environ/OPENROUTER_API_KEY
+      extra_headers:
+        HTTP-Referer: https://bytebot.ai
+        X-Title: Bytebot
+  - model_name: openrouter/google/gemma-3-27b-it:free
+    litellm_params:
+      model: openrouter/google/gemma-3-27b-it:free
+      api_key: os.environ/OPENROUTER_API_KEY
+      drop_params: true
+      extra_headers:
+        HTTP-Referer: https://bytebot.ai
+        X-Title: Bytebot
+    model_info:
+      supports_vision: true
+  - model_name: openrouter/google/gemma-3-12b-it:free
+    litellm_params:
+      model: openrouter/google/gemma-3-12b-it:free
+      api_key: os.environ/OPENROUTER_API_KEY
+      drop_params: true
+      extra_headers:
+        HTTP-Referer: https://bytebot.ai
+        X-Title: Bytebot
+    model_info:
+      supports_vision: true
+  - model_name: openrouter/google/gemma-3-4b-it:free
+    litellm_params:
+      model: openrouter/google/gemma-3-4b-it:free
+      api_key: os.environ/OPENROUTER_API_KEY
+      drop_params: true
+      extra_headers:
+        HTTP-Referer: https://bytebot.ai
+        X-Title: Bytebot
+  - model_name: openrouter/google/gemini-2.0-flash-001
+    litellm_params:
+      model: openrouter/google/gemini-2.0-flash-001
+      api_key: os.environ/OPENROUTER_API_KEY
+      drop_params: true
+      extra_headers:
+        HTTP-Referer: https://bytebot.ai
+        X-Title: Bytebot
+    model_info:
+      supports_vision: true
+  # Ollama Models (Local)
+  - model_name: ollama/llama3
+    litellm_params:
+      model: ollama/llama3
+      api_base: os.environ/OLLAMA_API_BASE
+  - model_name: ollama/mistral
+    litellm_params:
+      model: ollama/mistral
+      api_base: os.environ/OLLAMA_API_BASE
+  - model_name: ollama/qwen3
+    litellm_params:
+      model: ollama/qwen3
+      api_base: os.environ/OLLAMA_API_BASE
+  - model_name: ollama/qwen3:8b
+    litellm_params:
+      model: ollama/qwen3:8b
+      api_base: os.environ/OLLAMA_API_BASE
+  - model_name: ollama/qwen2.5
+    litellm_params:
+      model: ollama/qwen2.5
+      api_base: os.environ/OLLAMA_API_BASE
+  - model_name: ollama/qwen2.5:7b
+    litellm_params:
+      model: ollama/qwen2.5:7b
+      api_base: os.environ/OLLAMA_API_BASE

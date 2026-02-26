@@ -3,11 +3,12 @@ name: bytebot
 services:
   bytebot-desktop:
     # Build from source
-    build:
-      context: ../packages/
-      dockerfile: bytebotd/Dockerfile
+    # build:
+    #   context: ../packages/
+    #   dockerfile: bytebotd/Dockerfile
     # Use pre-built image
     image: ghcr.io/bytebot-ai/bytebot-desktop:edge
+    command: /bin/bash -c "mkdir -p /bytebot/bytebotd/logs && chown -R user:user /bytebot/bytebotd/logs && exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf -n"
     shm_size: "2g"
     container_name: bytebot-desktop
     restart: unless-stopped
@@ -19,6 +20,8 @@ services:
       - DISPLAY=:0
     networks:
       - bytebot-network
+    volumes:
+      - ../packages/bytebotd/dist/common/config/environment.config.js:/bytebot/bytebotd/dist/common/config/environment.config.js
 
   postgres:
     image: postgres:16-alpine
@@ -52,8 +55,29 @@ services:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - BYTEBOT_LLM_PROXY_URL=${BYTEBOT_LLM_PROXY_URL:-http://bytebot-llm-proxy:4000}
     depends_on:
       - postgres
+      - bytebot-llm-proxy
+    networks:
+      - bytebot-network
+
+  bytebot-llm-proxy:
+    build:
+      context: ../packages/
+      dockerfile: bytebot-llm-proxy/Dockerfile
+    container_name: bytebot-llm-proxy
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - OLLAMA_API_BASE=${OLLAMA_API_BASE:-http://host.docker.internal:11434}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - bytebot-network
 

@@ -40,9 +40,14 @@ export class ProxyService implements BytebotAgentService {
     }
 
     // Initialize OpenAI client with proxy configuration
+    // Ensure the baseURL ends with /v1 as expected by LiteLLM and OpenAI SDK
+    const baseURL = proxyUrl?.endsWith('/v1')
+      ? proxyUrl
+      : `${proxyUrl}/v1`;
+
     this.openai = new OpenAI({
       apiKey: 'dummy-key-for-proxy',
-      baseURL: proxyUrl,
+      baseURL,
     });
   }
 
@@ -68,20 +73,30 @@ export class ProxyService implements BytebotAgentService {
         messages: chatMessages,
         max_tokens: 8192,
         ...(useTools && { tools: proxyTools }),
-        reasoning_effort: 'high',
       };
+
+      // Add reasoning_effort: 'high' ONLY for OpenAI models that are known to support it (o1 models)
+      if (model.includes('o1') || model.includes('o3')) {
+        completionRequest.reasoning_effort = 'high';
+      }
+
+      this.logger.log(`Calling Proxy API for model ${model} with ${chatMessages.length} messages.`);
+      this.logger.debug(`Full completion request: ` + JSON.stringify(completionRequest));
 
       // Make the API call
       const completion = await this.openai.chat.completions.create(
         completionRequest,
         { signal },
       );
+      this.logger.log(`Proxy API call successful for model ${model}`);
 
       // Process the response
       const choice = completion.choices[0];
       if (!choice || !choice.message) {
         throw new Error('No valid response from Chat Completion API');
       }
+
+      this.logger.log(`Formatting response...`);
 
       // Convert response to MessageContentBlocks
       const contentBlocks = this.formatChatCompletionResponse(choice.message);
@@ -102,8 +117,11 @@ export class ProxyService implements BytebotAgentService {
 
       this.logger.error(
         `Error sending message to proxy: ${error.message}`,
-        error.stack,
+        JSON.stringify(error, null, 2),
       );
+      if (error instanceof OpenAI.APIError) {
+        this.logger.error(`API Error details:`, JSON.stringify(error.error, null, 2));
+      }
       throw error;
     }
   }
@@ -127,8 +145,10 @@ export class ProxyService implements BytebotAgentService {
     for (const message of messages) {
       const messageContentBlocks = message.content as MessageContentBlock[];
 
-      // Handle user actions specially
+      // Handle messages with only user actions (computer tool execution from user perspective)
+      // This is a special case in Bytebot but we map it to user text for the LLM
       if (
+        messageContentBlocks.length > 0 &&
         messageContentBlocks.every((block) => isUserActionContentBlock(block))
       ) {
         const userActionBlocks = messageContentBlocks.flatMap(
@@ -153,7 +173,7 @@ export class ProxyService implements BytebotAgentService {
                   type: 'image_url',
                   image_url: {
                     url: `data:${block.source.media_type};base64,${block.source.data}`,
-                    detail: 'high',
+                    detail: 'auto',
                   },
                 },
               ],
@@ -161,10 +181,16 @@ export class ProxyService implements BytebotAgentService {
           }
         }
       } else {
+        // Standard message processing
+        // We collect tool results and image completions separately to avoid interleaving roles
+        const turnToolMessages: ChatCompletionMessageParam[] = [];
+        const turnUserMessages: ChatCompletionMessageParam[] = [];
+        const turnOtherMessages: ChatCompletionMessageParam[] = [];
+
         for (const block of messageContentBlocks) {
           switch (block.type) {
             case MessageContentType.Text: {
-              chatMessages.push({
+              turnOtherMessages.push({
                 role: message.role === Role.USER ? 'user' : 'assistant',
                 content: block.text,
               });
@@ -172,14 +198,14 @@ export class ProxyService implements BytebotAgentService {
             }
             case MessageContentType.Image: {
               const imageBlock = block;
-              chatMessages.push({
+              turnUserMessages.push({
                 role: 'user',
                 content: [
                   {
                     type: 'image_url',
                     image_url: {
                       url: `data:${imageBlock.source.media_type};base64,${imageBlock.source.data}`,
-                      detail: 'high',
+                      detail: 'auto',
                     },
                   },
                 ],
@@ -204,62 +230,65 @@ export class ProxyService implements BytebotAgentService {
               break;
             }
             case MessageContentType.Thinking: {
-              const thinkingBlock = block;
-              const message: ChatCompletionMessageParam = {
+              const thinkingBlock = block as ThinkingContentBlock;
+              const msg: ChatCompletionMessageParam = {
                 role: 'assistant',
                 content: null,
               };
-              message['reasoning_content'] = thinkingBlock.thinking;
-              chatMessages.push(message);
+              msg['reasoning_content'] = thinkingBlock.thinking;
+              chatMessages.push(msg);
               break;
             }
             case MessageContentType.ToolResult: {
-              const toolResultBlock = block;
+              const toolResultBlock = block as ToolResultContentBlock;
 
-              if (
-                toolResultBlock.content.every(
-                  (content) => content.type === MessageContentType.Image,
-                )
-              ) {
-                chatMessages.push({
-                  role: 'tool',
-                  tool_call_id: toolResultBlock.tool_use_id,
-                  content: 'screenshot',
+              const textContent = toolResultBlock.content
+                .filter((c) => c.type === MessageContentType.Text)
+                .map((c) => (c as TextContentBlock).text)
+                .join('\n');
+
+              const imageBlocks = toolResultBlock.content.filter(
+                (c) => c.type === MessageContentType.Image,
+              ) as ImageContentBlock[];
+
+              turnToolMessages.push({
+                role: 'tool',
+                tool_call_id: toolResultBlock.tool_use_id,
+                content: textContent || (imageBlocks.length > 0 ? 'screenshot' : 'success'),
+              });
+
+              if (imageBlocks.length > 0) {
+                const userMsgContent: ChatCompletionContentPart[] = [
+                  {
+                    type: 'text',
+                    text: `Screenshot result for tool call ${toolResultBlock.tool_use_id}:`,
+                  },
+                ];
+
+                imageBlocks.forEach((img) => {
+                  userMsgContent.push({
+                    type: 'image_url',
+                    image_url: {
+                      url: `data:${img.source.media_type};base64,${img.source.data}`,
+                      detail: 'auto',
+                    },
+                  });
+                });
+
+                turnUserMessages.push({
+                  role: 'user',
+                  content: userMsgContent,
                 });
               }
-
-              toolResultBlock.content.forEach((content) => {
-                if (content.type === MessageContentType.Text) {
-                  chatMessages.push({
-                    role: 'tool',
-                    tool_call_id: toolResultBlock.tool_use_id,
-                    content: content.text,
-                  });
-                }
-
-                if (content.type === MessageContentType.Image) {
-                  chatMessages.push({
-                    role: 'user',
-                    content: [
-                      {
-                        type: 'text',
-                        text: 'Screenshot',
-                      },
-                      {
-                        type: 'image_url',
-                        image_url: {
-                          url: `data:${content.source.media_type};base64,${content.source.data}`,
-                          detail: 'high',
-                        },
-                      },
-                    ],
-                  });
-                }
-              });
               break;
             }
           }
         }
+
+        // Add collected messages in stable order: other -> tool -> user
+        chatMessages.push(...turnOtherMessages);
+        chatMessages.push(...turnToolMessages);
+        chatMessages.push(...turnUserMessages);
       }
     }
 
